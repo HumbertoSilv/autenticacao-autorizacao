@@ -3,6 +3,7 @@ click==8.0.3
 flake8==4.0.1
 Flask==2.0.2
 Flask-HTTPAuth==4.4.0
+Flask-JWT-Extended==4.3.1
 Flask-Migrate==3.1.0
 Flask-SQLAlchemy==2.5.1
 greenlet==1.1.2
@@ -14,6 +15,7 @@ mccabe==0.6.1
 psycopg2-binary==2.9.1
 pycodestyle==2.8.0
 pyflakes==2.4.0
+PyJWT==2.2.0
 python-dotenv==0.19.1
 SQLAlchemy==1.4.25
 Werkzeug==2.0.2
