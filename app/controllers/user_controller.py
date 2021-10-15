@@ -1,13 +1,13 @@
-from flask import request, jsonify, current_app
-from app.models.user_model import Usermodel
-from secrets import token_urlsafe
-from app.configs.auth import auth
 import sqlalchemy
+from app.models.user_model import Usermodel
+from flask import current_app, jsonify, request
+from flask_jwt_extended import (
+    create_access_token, jwt_required, get_jwt_identity
+)
 
 
 def create_user():
     data = request.json
-    data["api_key"] = token_urlsafe(16)
     password_to_hash = data.pop("password")
 
     new_user = Usermodel(**data)
@@ -30,15 +30,18 @@ def login_user():
     if not check_password:
         return {"msg": "Incorrect password."}, 401
 
-    return jsonify({"api_key": exists_user.api_key}), 200
+    access_token = create_access_token(identity=exists_user)
+
+    return jsonify({"access_token": access_token}), 200
 
 
-@auth.login_required
+@jwt_required()
 def get_user():
-    return jsonify(auth.current_user())
+    current_user = get_jwt_identity()
+    return jsonify(current_user), 200
 
 
-@auth.login_required
+@jwt_required()
 def update_user():
     data = request.json
     if len(data) != 4:
@@ -57,9 +60,13 @@ def update_user():
     return jsonify(user_update), 200
 
 
-@auth.login_required
+@jwt_required()
 def delete_user():
-    current_app.db.session.delete(auth.current_user())
-    current_app.db.session.commit()
+    user = get_jwt_identity()
+    found_user = Usermodel.query.filter_by(email=user["email"]).first()
 
-    return {"msg": "User John has been deleted."}, 200
+    current_app.db.session.delete(found_user)
+    current_app.db.session.commit()
+    print(user, found_user)
+
+    return {"msg": f"User {user['name']} has been deleted."}, 200
