@@ -2,8 +2,8 @@ import sqlalchemy
 from app.models.user_model import Usermodel
 from flask import current_app, jsonify, request
 from flask_jwt_extended import (
-    create_access_token, jwt_required, get_jwt_identity
-)
+    create_access_token, get_jwt_identity, jwt_required
+    )
 
 
 def create_user():
@@ -54,6 +54,7 @@ def update_user():
 
         Usermodel.query.filter_by(email=data["email"]).update(data)
         current_app.db.session.commit()
+
     except sqlalchemy.exc.InvalidRequestError:
         return {"msg": "Invalid fields."}, 400
 
@@ -67,6 +68,5 @@ def delete_user():
 
     current_app.db.session.delete(found_user)
     current_app.db.session.commit()
-    print(user, found_user)
 
     return {"msg": f"User {user['name']} has been deleted."}, 200

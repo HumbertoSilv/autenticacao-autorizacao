@@ -1,6 +1,7 @@
 from flask import Flask
-from app.configs import env_configs, database, migrate, jwt
+
 from app.blueprints import user_blueprint
+from app.configs import database, env_configs, jwt, migrate
 
 
 def create_app(app: Flask):
